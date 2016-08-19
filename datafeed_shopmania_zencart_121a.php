@@ -2,7 +2,7 @@
 ini_set('memory_limit', '256M');//
 ini_set('zend.enable_gc', '1');//steve vain hope to reduce memory useage
 
-$debug = false;//steve, true enables various echos scattered about
+$debug = false;//steve, true enables various echos scattered about and applies a limit to work with a smaller set of results
 //steve changes : compare to 1.21 from Shopmania to see the differences
 //removal of obsolete mysql_functions, local configure, master category in sql (allow cat id 730!), boilerplate text, product description filters (remove embedded youtube, images and my shop-specific elements)
 
@@ -340,7 +340,9 @@ if (strtolower($shipping_flat['configuration_value']) == "true") {
 }
 
 // Query database for extracting data. It might be needed to left join the categories table for extracting the category name
-$image_field = ($show_image == "on") ? "$prod_table.products_image" : "''";
+//$image_field = ($show_image == "on") ? "$prod_table.products_image" : "''";
+//steve this should always be on as used in the while - list loop
+$image_field = "$prod_table.products_image";
 
 if ($show_description == "limited") {
 	$description_field = "SUBSTRING($prod_desc_table.products_description, 1,600) AS products_description";
@@ -379,13 +381,13 @@ ORDER BY $prod_table.products_id ASC, $cat_table.parent_id DESC" . addslashes($a
 */
 
 //steve Shopmania lists only does 2000 products for free, the rest are ignored
-//modfied to get only the master category id of the product
+//modified to get only the master category id of the product, AND products with a price AND products with an image
 $q = "SELECT $prod_table.master_categories_id, $cat_manuf_table.manufacturers_name, $prod_table.products_model, $prod_table.products_id, $prod_desc_table.products_name, " . $description_field . ", " . $image_field . ", $prod_table.products_price, $prod_table.products_tax_class_id, $prod_table.products_priced_by_attribute, $prod_table.products_quantity, $prod_table.product_is_call
 FROM $prod_table
 LEFT JOIN $prod_desc_table ON ( $prod_table.products_id = $prod_desc_table.products_id AND $prod_desc_table.language_id = '$main_language' )
 LEFT JOIN $cat_table ON ($cat_table.categories_id = $prod_table.master_categories_id ) 
 LEFT JOIN $cat_manuf_table ON $prod_table.manufacturers_id = $cat_manuf_table.manufacturers_id
-WHERE $prod_table.products_status = 1 AND $prod_table.product_is_call = 0 AND $prod_table.products_price > 0" . addslashes($on_stock_cond) . "
+WHERE $prod_table.products_status = 1 AND $prod_table.product_is_call = 0 AND $prod_table.products_price > 0 AND $prod_table.products_image > '' AND $prod_table.products_image <> 'no_picture_es.gif' " . addslashes($on_stock_cond) . "
 ORDER BY $prod_table.products_model ASC" . addslashes($add_limit);
 
 //echo __LINE__.' '.$q.'<br />';//steve debug
