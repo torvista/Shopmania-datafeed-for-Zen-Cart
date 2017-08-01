@@ -616,7 +616,7 @@ $entry ++;
 		}
 		
 		//Add Shipping
-		$shipping_flat_value = number_format($row_currency_rate['value'] * $shipping_flat_value, 2);
+		$shipping_flat_value = number_format($row_currency_rate['value'] * (float)$shipping_flat_value, 2);//steve added float for php7 warning
 		$shipping_value = ($add_shipping == "on" && @$shipping_flat_value > 0) ? $shipping_flat_value : "";
 		
 		// Add gtin
@@ -1138,7 +1138,7 @@ function smfeed_compression_start(){
 	}
 	
 	$idx_phpver = phpversion();
-	$useragent = (!empty($_SERVER["HTTP_USER_AGENT"]) ) ? $_SERVER["HTTP_USER_AGENT"] : $HTTP_USER_AGENT;//TODO BUG: $HTTP_USER_AGENT NOT DEFINED
+	$useragent = !empty($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : $HTTP_USER_AGENT;//steve global defined in functions_general.php
 	if ($idx_phpver >= "4.0.4pl1" && (strstr($useragent, "compatible") || strstr($useragent, "Gecko"))) {
 		if (extension_loaded("zlib"))	{
 			// SET COMPRESSION LEVEL
@@ -1160,7 +1160,7 @@ function smfeed_compression_start(){
 				header("Content-Encoding: gzip");
 			}			
 		}
-	}
+	} return null;//steve added return
 }
 
 function smfeed_compression_end(){
@@ -1183,7 +1183,7 @@ function smfeed_compression_end(){
 		print $gzip_contents;
 		print pack("V", $gzip_crc);
 		print pack("V", $gzip_size);
-	}
+	} return null;//steve added return
 }
 
 ######################################################################
