@@ -1,4 +1,4 @@
-# Shopmania-datafeed-for-Zen-Cart
+# Shopmania datafeed for Zen Cart
 Based on Shopmania datafeed for Zen Cart v1.21
 
 This code is offered to help others who want to keep using this with php7.
